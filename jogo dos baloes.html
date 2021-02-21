@@ -1,0 +1,150 @@
+html:
+
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <title>Jogo dos Balões</title>
+    <meta charset="utf-8" />
+    <script type="text/javascript">
+    	
+    </script>
+    
+  </head>
+  
+  <body>
+  
+  <div>
+    <p>
+    <b>Nível:</b>
+    
+    <select id="niveljogo">
+      <option value="1">Fácil</option>
+      <option value="2">Médio</option>
+      <option value="3">Difícil</option>
+    </select>
+    </p>
+   
+    <img src="https://www.apaulista.org.br/wp-content/uploads/2020/02/metrostation-play-icon-png-clipart.jpg" width= 30px height= 30px onclick="iniciajogo()">
+  </div>
+  <div style="float:left; width:auto; height:400px; background=#fff; border: solid 1px #c8c8c8">
+    <table>
+      <td><img src="https://klffestas.com.br/wp-content/uploads/2018/10/b_5_800x800px.png" widht="60px" height="60px"></td>
+      <td><span id='balaointeiro' style="font-size:25px;"></span></td>
+    </table>
+    <br/>
+    <table>
+      <td><img src="https://freepikpsd.com/wp-content/uploads/2019/10/estouro-png-1-Transparent-Images.png" widht="60px" height="60px"></td>
+      <td><span id='balaovazio' style="font-size:25px;"></span></td>
+    </table>
+    <br/>
+    <table style="width: 200px; height: 150px;">
+      <td style="background: url('https://w1.pngwing.com/pngs/806/256/png-transparent-watch-chronometer-watch-stopwatch-hand-finger-thumb-joint-thumbnail.png'); background-size: 200px 150px; text-align: center;">
+      <span id="cronometro" style="color:red; font-size:70px;"></span>
+      </td>
+    </table>
+  </div>
+  <div id="cenario" style="float:left; width:500px; height: 400px; background:url('https://static.vecteezy.com/ti/vetor-gratis/p1/664834-parque-da-cidade-ou-praca-com-arvores-no-prado-vetor.jpg'); background-size: 500px 400px;">
+  
+  </div>
+  
+  </body>
+</html>
+
+
+JS:
+var timerid=null;
+
+function iniciajogo(){
+				var nivel_jogo = document.getElementById('niveljogo').value;
+        var nivel = parseInt(nivel_jogo);
+        var temposeg = 0;
+        alert('Jogo Iniciado');
+        
+        if(nivel == 1){
+        	temposeg = 120;}
+        
+        else if(nivel == 2){
+        	temposeg = 90;}
+        
+        else if(nivel == 3){
+        	temposeg = 60;
+        }
+        
+        document.getElementById('cronometro').innerHTML=temposeg;
+        var qtdbalao = 108;
+        criabalao(qtdbalao);
+        
+        document.getElementById('balaointeiro').innerHTML=qtdbalao;
+        document.getElementById('balaovazio').innerHTML=0;
+        
+        contagemtempo(temposeg + 1);
+        
+			}
+
+function contagemtempo(segundos){
+	
+  segundos = segundos - 1;
+  if(segundos == -1){
+  	clearTimeout(timerid);
+    gameover();
+    return false;
+  }
+	document.getElementById('cronometro').innerHTML=segundos;
+  timerid = setTimeout("contagemtempo("+segundos+")",1000);
+}
+      
+function criabalao(qtdbalao){
+	for(var i=1;i<=qtdbalao;i++){
+  	var balao = document.createElement("img");
+    balao.src='https://klffestas.com.br/wp-content/uploads/2018/10/b_5_800x800px.png';
+    balao.style.width = '40px'
+    balao.style.height = '40px';
+    balao.style.margin ='10px;';
+    balao.id = 'b'+i;
+    
+    balao.onclick = function(){estourar(this);};
+    
+    document.getElementById('cenario').appendChild(balao);
+  }
+}
+
+function estourar(e){
+	var idbalao = e.id;
+  
+  document.getElementById(idbalao).setAttribute("onclick","");
+  document.getElementById(idbalao).src = 'https://freepikpsd.com/wp-content/uploads/2019/10/estouro-png-1-Transparent-Images.png';
+  document.getElementById(idbalao).width = '40px';
+  document.getElementById(idbalao). height = '40px';
+  
+	pontuacao(-1);
+}
+
+function pontuacao(acao){
+	var balao_inteiro = document.getElementById('balaointeiro').innerHTML;
+  balao_inteiro = parseInt(balao_inteiro);
+  var balao_estourado = document.getElementById('balaovazio').innerHTML;
+  balao_estourado = parseInt(balao_estourado);
+  
+  
+  balao_inteiro = balao_inteiro + acao;
+  balao_estourado = balao_estourado - acao;
+  
+  document.getElementById('balaointeiro').innerHTML = balao_inteiro;
+  document.getElementById('balaovazio').innerHTML = balao_estourado;
+  
+  situacao_jogo(balao_inteiro);
+}
+
+function situacao_jogo(inteiro){
+	if(inteiro == 0){
+  	alert('Parabéns! Você venceu.');
+    pararjogo();
+  }
+}
+
+function pararjogo(){
+	clearTimeout(timerid);
+}
+function gameover(){
+	alert('GAMER OVER! Tente Novamente...');
+}
